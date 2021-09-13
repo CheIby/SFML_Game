@@ -6,6 +6,7 @@
 #include "Game.h"
 #include "Player.h"
 #include "Background.h"
+#include "mainMenu.h"
 
 
 int main()

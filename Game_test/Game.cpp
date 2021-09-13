@@ -6,6 +6,16 @@ void Game::initWindow()
 	this->window->setFramerateLimit(75);
 }
 
+void Game::innitMainMenu()
+{
+	this->font.loadFromFile("font/COOPBL.ttf");
+	this->menu = new mainMenu();
+	this->Newgame = new Botton(600, 400, 250, 50, &font, "NEW GAME", 40,
+		sf::Color(122, 122, 122, 255), sf::Color(122, 122, 122, 122), sf::Color(255, 255, 255, 0));
+	/*this->Exit = Botton(600, 500, 250, 50, &font, "EXIT", 40,
+		sf::Color(122, 122, 122, 255), sf::Color(122, 122, 122, 122), sf::Color(255, 255, 255, 0));*/
+}
+
 void Game::initBackground()
 {
 	this->backgroundTexture[0].loadFromFile("image/sky.png");
@@ -66,6 +76,7 @@ void Game::initEnemy()
 Game::Game()
 {
 	this->initVar();
+	this->innitMainMenu();
 	this->initBackground();
 	this->initItem();
 	this->initBullet();
@@ -104,6 +115,24 @@ void Game::updatePullEvent()
 		if (ev.Event::type == sf::Event::Closed)
 			this->window->close();
 	}
+}
+
+void Game::updateMenu()
+{
+	
+	this->Newgame->update(this->mousePos);
+	/*this->Exit.update(mousePosition);*/
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::G))
+	{
+		this->gameOn = 1;
+		this->menuOn = 0;
+	}
+	if (this->Newgame->isPressed())
+	{
+		this->gameOn = 1;
+		this->menuOn = 0;
+	}
+	std::cout << this->mousePos.x<<"\t"<<this->mousePos.y << "\n";
 }
 
 void Game::updateInput()
@@ -310,6 +339,15 @@ void Game::update()
 	this->updateCollisionWorld();
 }
 
+void Game::renderMenu()
+{
+	this->window->clear();
+	this->menu->render(*this->window);
+	this->Newgame->render(this->window);
+	/*this->Exit.render(this->window);*/
+	this->window->display();
+}
+
 void Game::render()
 {
 	this->window->clear();
@@ -341,10 +379,18 @@ void Game::run()
 {
 	while (this->window->isOpen())
 	{
+		this->mouse = sf::Mouse::getPosition(*this->window);
+		this->mousePos = sf::Vector2f(static_cast<float>(mouse.x), static_cast<float>(mouse.y));
 		this->updatePullEvent();
-		if (this->player->getHp()>0)
+		if (menuOn)
+		{
+			this->updateMenu();
+			this->renderMenu();
+		}
+		if (gameOn)
+		{
 			this->update();
-
-		this->render();
+			this->render();
+		}
 	}
 }

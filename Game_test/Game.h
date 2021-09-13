@@ -6,6 +6,8 @@
 #include "Enemy.h"
 #include "GUI.h"
 #include "Item.h"
+#include "mainMenu.h"
+#include "Botton.h"
 
 class Game
 {
@@ -14,6 +16,18 @@ private:
 	sf::RenderWindow* window;
 	sf::Clock clock;
 	float deltaTime;
+	bool menuOn = 1;
+	bool gameOn = 0;
+	
+	//mainmenu
+	mainMenu *menu;
+
+	//botton
+	sf::Vector2i mouse;
+	sf::Vector2f mousePos;
+	sf::Font font;
+	Botton *Newgame;
+	/*Botton Exit;*/
 
 	//background
 	sf::Texture backgroundTexture[2];
@@ -33,7 +47,6 @@ private:
 	//bullet
 	std::map<std::string, sf::Texture*> bulletTexture;
 	std::vector<Bullet*> bullets;
-	sf::Texture bulletX2;
 	int bulletFlag;
 	float flagcooldown;
 	float flagcooldownMax;
@@ -62,6 +75,7 @@ private:
 
 	//con
 	void initWindow();
+	void innitMainMenu();
 	void initBackground();
 	void initItem();
 	void initVar();
@@ -77,6 +91,9 @@ public:
 	virtual ~Game();
 
 	void updatePullEvent();
+
+	void updateMenu();
+
 	void updateInput();
 	void updateCollisionWorld();
 	void updateSpawnTimer();
@@ -87,6 +104,7 @@ public:
 	void updateCombat();
 	void updateGui();
 	void update();
+	void renderMenu();
 	void render();
 	void run ();
 };
