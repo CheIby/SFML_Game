@@ -27,7 +27,8 @@ private:
 	sf::Vector2f mousePos;
 	sf::Font font;
 	Botton *Newgame;
-	/*Botton Exit;*/
+	Botton *Exit;
+	Botton* HighScore;
 
 	//background
 	sf::Texture backgroundTexture[2];

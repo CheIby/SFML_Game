@@ -10,10 +10,12 @@ void Game::innitMainMenu()
 {
 	this->font.loadFromFile("font/COOPBL.ttf");
 	this->menu = new mainMenu();
-	this->Newgame = new Botton(600, 400, 250, 50, &font, "NEW GAME", 40,
+	this->Newgame = new Botton(533, 300, 300, 50, &font, "NEW GAME", 40,
 		sf::Color(122, 122, 122, 255), sf::Color(122, 122, 122, 122), sf::Color(255, 255, 255, 0));
-	/*this->Exit = Botton(600, 500, 250, 50, &font, "EXIT", 40,
-		sf::Color(122, 122, 122, 255), sf::Color(122, 122, 122, 122), sf::Color(255, 255, 255, 0));*/
+	this->HighScore = new Botton(533, 400, 300, 50, &font, "HIGH SCORE", 40,
+		sf::Color(122, 122, 122, 255), sf::Color(122, 122, 122, 122), sf::Color(255, 255, 255, 0));
+	this->Exit = new Botton(533, 500, 300, 50, &font, "EXIT", 40,
+		sf::Color(122, 122, 122, 255), sf::Color(122, 122, 122, 122), sf::Color(255, 255, 255, 0));
 }
 
 void Game::initBackground()
@@ -121,7 +123,8 @@ void Game::updateMenu()
 {
 	
 	this->Newgame->update(this->mousePos);
-	/*this->Exit.update(mousePosition);*/
+	this->Exit->update(this->mousePos);
+	this->HighScore->update(this->mousePos);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::G))
 	{
 		this->gameOn = 1;
@@ -131,6 +134,10 @@ void Game::updateMenu()
 	{
 		this->gameOn = 1;
 		this->menuOn = 0;
+	}
+	if (this->Exit->isPressed())
+	{
+		this->window->close();
 	}
 	std::cout << this->mousePos.x<<"\t"<<this->mousePos.y << "\n";
 }
@@ -344,7 +351,8 @@ void Game::renderMenu()
 	this->window->clear();
 	this->menu->render(*this->window);
 	this->Newgame->render(this->window);
-	/*this->Exit.render(this->window);*/
+	this->Exit->render(this->window);
+	this->HighScore->render(this->window);
 	this->window->display();
 }
 
