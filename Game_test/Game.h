@@ -18,6 +18,8 @@ private:
 	float deltaTime;
 	bool menuOn = 1;
 	bool gameOn = 0;
+	bool scoreOn = 0;
+	bool gamOverOn = 0;
 	
 	//mainmenu
 	mainMenu *menu;
@@ -29,8 +31,11 @@ private:
 	Botton *Newgame;
 	Botton *Exit;
 	Botton* HighScore;
+	Botton* Back;
 
 	//background
+	sf::Texture highscoreTex;
+	sf::Sprite highScoreSpirte;
 	sf::Texture backgroundTexture[2];
 	sf::RectangleShape background2;
 	sf::Texture background2Texture;
@@ -94,6 +99,7 @@ public:
 	void updatePullEvent();
 
 	void updateMenu();
+	void updateHighScore();
 
 	void updateInput();
 	void updateCollisionWorld();
@@ -105,7 +111,9 @@ public:
 	void updateCombat();
 	void updateGui();
 	void update();
+
 	void renderMenu();
+	void renderHigh();
 	void render();
 	void run ();
 };

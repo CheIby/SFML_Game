@@ -16,6 +16,10 @@ void Game::innitMainMenu()
 		sf::Color(122, 122, 122, 255), sf::Color(122, 122, 122, 122), sf::Color(255, 255, 255, 0));
 	this->Exit = new Botton(533, 500, 300, 50, &font, "EXIT", 40,
 		sf::Color(122, 122, 122, 255), sf::Color(122, 122, 122, 122), sf::Color(255, 255, 255, 0));
+	this->Back = new Botton(25, 25, 300, 50, &font, "BACK", 40,
+		sf::Color(122, 122, 122, 255), sf::Color(122, 122, 122, 122), sf::Color(255, 255, 255, 0));
+	this->highscoreTex.loadFromFile("image/menu.png");
+	this->highScoreSpirte.setTexture(this->highscoreTex);
 }
 
 void Game::initBackground()
@@ -129,17 +133,39 @@ void Game::updateMenu()
 	{
 		this->gameOn = 1;
 		this->menuOn = 0;
+		this->scoreOn = 0;
+		this->gamOverOn = 0;
 	}
 	if (this->Newgame->isPressed())
 	{
 		this->gameOn = 1;
 		this->menuOn = 0;
+		this->scoreOn = 0;
+		this->gamOverOn = 0;
+	}
+	if (this->HighScore->isPressed())
+	{
+		this->gameOn = 0;
+		this->menuOn = 0;
+		this->scoreOn = 1;
+		this->gamOverOn = 0;
 	}
 	if (this->Exit->isPressed())
 	{
 		this->window->close();
 	}
-	std::cout << this->mousePos.x<<"\t"<<this->mousePos.y << "\n";
+}
+
+void Game::updateHighScore()
+{
+	this->Back->update(this->mousePos);
+	if (this->Back->isPressed())
+	{
+		this->gameOn = 0;
+		this->menuOn = 1;
+		this->scoreOn = 0;
+		this->gamOverOn = 0;
+	}
 }
 
 void Game::updateInput()
@@ -236,8 +262,16 @@ void Game::updateEnemy()
 		{
 			this->player->updateHp(this->enemies[i]->Dmg());
 			this->player->collisionPlayer();
+			if (this->player->getHp() == 0)
+			{
+				this->gameOn = 0;
+				this->menuOn = 0;
+				this->scoreOn = 0;
+				this->gamOverOn = 1;
+			}
 			delete this->enemies[i];
 			this->enemies.erase(this->enemies.begin() + i);
+			
 		}
 	}
 	
@@ -356,6 +390,14 @@ void Game::renderMenu()
 	this->window->display();
 }
 
+void Game::renderHigh()
+{
+	this->window->clear();
+	this->window->draw(this->highScoreSpirte);
+	this->Back->render(this->window);
+	this->window->display();
+}
+
 void Game::render()
 {
 	this->window->clear();
@@ -395,10 +437,19 @@ void Game::run()
 			this->updateMenu();
 			this->renderMenu();
 		}
+		if (scoreOn)
+		{
+			this->updateHighScore();
+			this->renderHigh();
+		}
 		if (gameOn)
 		{
 			this->update();
 			this->render();
+		}
+		if (gamOverOn)
+		{
+			this->window->close();
 		}
 	}
 }
