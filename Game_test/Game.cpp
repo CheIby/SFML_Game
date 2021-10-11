@@ -11,16 +11,28 @@ void Game::innitMainMenu()
 	this->font.loadFromFile("font/COOPBL.ttf");
 	this->menu = new mainMenu();
 	this->Newgame = new Botton(533, 300, 300, 50, &font, "NEW GAME", 40,
-		sf::Color(122, 122, 122, 255), sf::Color(122, 122, 122, 122), sf::Color(255, 255, 255, 0));
+		sf::Color(1, 1, 1, 255), sf::Color(1, 1, 1, 122), sf::Color(1, 1, 1, 0));
 	this->HighScore = new Botton(533, 400, 300, 50, &font, "HIGH SCORE", 40,
-		sf::Color(122, 122, 122, 255), sf::Color(122, 122, 122, 122), sf::Color(255, 255, 255, 0));
+		sf::Color(1, 1, 1, 255), sf::Color(1, 1, 1, 122), sf::Color(1, 1, 1, 0));
 	this->Exit = new Botton(533, 500, 300, 50, &font, "EXIT", 40,
-		sf::Color(122, 122, 122, 255), sf::Color(122, 122, 122, 122), sf::Color(255, 255, 255, 0));
-	this->Back = new Botton(25, 25, 300, 50, &font, "BACK", 40,
-		sf::Color(122, 122, 122, 255), sf::Color(122, 122, 122, 122), sf::Color(255, 255, 255, 0));
-	this->highscoreTex.loadFromFile("image/menu.png");
-	this->highScoreSpirte.setTexture(this->highscoreTex);
+		sf::Color(1, 1, 1, 255), sf::Color(1, 1, 1, 122), sf::Color(1, 1, 1, 0));
+	this->Back = new Botton(25, 25, 150, 50, &font, "BACK", 40,
+		sf::Color(1, 1, 1, 255), sf::Color(1, 1, 1, 122), sf::Color(1, 1, 1, 0));
 }
+
+//void Game::initHighScore()
+//{
+//	this->highscoreTex.loadFromFile("image/mainmenu.jpg");
+//	this->highScoreSpirte.setTexture(this->highscoreTex);
+//	file = fopen("./highscore.txt", "r");
+//	for (int i = 0; i < 5; i++)
+//	{
+//		fscanf(file, "%s", temp);
+//		playerName[i] = temp;
+//		fscanf(file, "%d", scoreArr[i]);
+//		highScore.push_back(std::make_pair(scoreArr[i], playerName[i]));
+//	}
+//}
 
 void Game::initBackground()
 {
@@ -47,7 +59,7 @@ void Game::initVar()
 {
 	this->gui = new GUI();
 	this->itemSpawnTimerMax = 15.f; 
-	this->spawnEnemyTimerMax = 80.f;
+	this->spawnEnemyTimerMax = 20.f;
 	this->updateSpawmTimer = 10000;
 }
 
@@ -83,6 +95,7 @@ Game::Game()
 {
 	this->initVar();
 	this->innitMainMenu();
+	/*this->initHighScore();*/
 	this->initBackground();
 	this->initItem();
 	this->initBullet();
@@ -94,7 +107,10 @@ Game::Game()
 Game::~Game()
 {
 	delete this->player;
-	
+	delete this->menu;
+	delete this->Newgame;
+	delete this->HighScore;
+	delete this->Exit;
 	for (auto& i : this->bulletTexture)
 	{
 		delete i.second;
@@ -104,14 +120,17 @@ Game::~Game()
 	{
 		delete i;
 	}
+
 	for (auto* i : this->enemies)
 	{
 		delete i;
 	}
+
 	for (auto* i : this->items)
 	{
 		delete i;
 	}
+	
 }
 
 void Game::updatePullEvent()
@@ -156,17 +175,28 @@ void Game::updateMenu()
 	}
 }
 
-void Game::updateHighScore()
-{
-	this->Back->update(this->mousePos);
-	if (this->Back->isPressed())
-	{
-		this->gameOn = 0;
-		this->menuOn = 1;
-		this->scoreOn = 0;
-		this->gamOverOn = 0;
-	}
-}
+//void Game::updateHighScore()
+//{
+//	highScore.erase(highScore.begin(), highScore.end());
+//	file = fopen("./highsocore.txt", "r");
+//	for (int i = 0; i < 5; i++)
+//	{
+//		fscanf_s(file, "%s", temp);
+//		playerName[i] = temp;
+//		fscanf_s(file, "%d", scoreArr[i]);
+//		highScore.push_back(std::make_pair(scoreArr[i], playerName[i]));
+//	}
+//
+//	this->Back->update(this->mousePos);
+//	if (this->Back->isPressed())
+//	{
+//		this->gameOn = 0;
+//		this->menuOn = 1;
+//		this->scoreOn = 0;
+//		this->gamOverOn = 0;
+//	}
+//
+//}
 
 void Game::updateInput()
 {
@@ -220,7 +250,7 @@ void Game::updateSpawnTimer()
 		this->timer = 0;
 		this->spawnEnemyTimerMax -= 10;
 		if (this->spawnEnemyTimerMax <= 10)
-			this->spawnEnemyTimerMax = 20;
+			this->spawnEnemyTimerMax = 10;
 	}
 	this->timer += 5;
 }
@@ -251,7 +281,7 @@ void Game::updateEnemy()
 	
 	for (int i = 0; i < enemies.size(); i++)
 	{
-		this->enemies[i]->updateEnemy();
+		this->enemies[i]->updateEnemy(this->player->getPos(),this->player->getCenter(),this->player->getBounds());
 		this->enemies[i]->updateAnimation(0,this->deltaTime);
 		
 		if (this->enemies[i]->getPos().x < 0 - this->enemies[i]->getBounds().width)
@@ -260,18 +290,28 @@ void Game::updateEnemy()
 		}
 		else if (enemies[i]->getBounds().intersects(this->player->getBounds()))
 		{
-			this->player->updateHp(this->enemies[i]->Dmg());
-			this->player->collisionPlayer();
-			if (this->player->getHp() == 0)
+
+			if (this->player->getSaha())
 			{
-				this->gameOn = 0;
-				this->menuOn = 0;
-				this->scoreOn = 0;
-				this->gamOverOn = 1;
+				this->gui->updatePoint(this->enemies[i]->Point());
+				this->gui->updatetype(this->enemies[i]->getType());
+				delete this->enemies[i];
+				this->enemies.erase(this->enemies.begin() + i);
 			}
-			delete this->enemies[i];
-			this->enemies.erase(this->enemies.begin() + i);
-			
+			else
+			{
+				this->player->updateHp(this->enemies[i]->Dmg());
+				this->player->collisionPlayer();
+				if (this->player->getHp() == 0)
+				{
+					this->gameOn = 0;
+					this->menuOn = 0;
+					this->scoreOn = 0;
+					this->gamOverOn = 1;
+				}
+				delete this->enemies[i];
+				this->enemies.erase(this->enemies.begin() + i);
+			}
 		}
 	}
 	
@@ -387,16 +427,17 @@ void Game::renderMenu()
 	this->Newgame->render(this->window);
 	this->Exit->render(this->window);
 	this->HighScore->render(this->window);
+	/*showText(sf::Vector2f(660.0f, 950.0f), "63010952 Soravee Rattanaapha", &font, 40, *window);*/
 	this->window->display();
 }
 
-void Game::renderHigh()
-{
-	this->window->clear();
-	this->window->draw(this->highScoreSpirte);
-	this->Back->render(this->window);
-	this->window->display();
-}
+//void Game::renderHigh()
+//{
+//	this->window->clear();
+//	this->window->draw(this->highScoreSpirte);
+//	this->Back->render(this->window);
+//	this->window->display();
+//}
 
 void Game::render()
 {
@@ -437,11 +478,11 @@ void Game::run()
 			this->updateMenu();
 			this->renderMenu();
 		}
-		if (scoreOn)
+		/*if (scoreOn)
 		{
 			this->updateHighScore();
 			this->renderHigh();
-		}
+		}*/
 		if (gameOn)
 		{
 			this->update();

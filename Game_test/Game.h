@@ -1,3 +1,5 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #ifndef GAME_H
 #define GAME_H
 #include "Player.h"
@@ -8,6 +10,8 @@
 #include "Item.h"
 #include "mainMenu.h"
 #include "Botton.h"
+
+//void showText(sf::Vector2f position, std::string word, sf::Font* font, int size, sf::RenderWindow& window);
 
 class Game
 {
@@ -23,6 +27,14 @@ private:
 	
 	//mainmenu
 	mainMenu *menu;
+
+	//highscore
+	std::vector<std::pair<int, std::string>> highScore;
+	std::FILE* file;
+	char temp[25];
+	std::string playerName[6];
+	int scoreArr[6];
+	bool collectHS = false;
 
 	//botton
 	sf::Vector2i mouse;
@@ -82,6 +94,7 @@ private:
 	//con
 	void initWindow();
 	void innitMainMenu();
+	void initHighScore();
 	void initBackground();
 	void initItem();
 	void initVar();
@@ -117,5 +130,16 @@ public:
 	void render();
 	void run ();
 };
+
+//void showText(sf::Vector2f position, std::string word, sf::Font* font, int size, sf::RenderWindow& window) {
+//	sf::Text text;
+//	text.setFont(*font);
+//	text.setPosition(position);
+//	text.setString(word);
+//	text.setCharacterSize(size);
+//	text.setOutlineColor(sf::Color::Black);
+//	text.setOutlineThickness(3);
+//	window.draw(text);
+//}
 
 #endif // !GAME_H

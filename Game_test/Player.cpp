@@ -3,12 +3,14 @@
 
 void Player::initStatus()
 {
+	this->damage = 50;
 	this->hpMax = 1000;
 	this->hp = this->hpMax;
 	this->movementSpeed = 5.f;
 	this->cooldownMax = 12.f;
 	this->cooldown = this->cooldownMax;
 	this->flag = 0;
+	this->sahaBool = false;
 	this->itemCooldownMax = 200.f;
 	this->fireRateflag = 0;
 	this->itemCooldownMax2 = 200.f;
@@ -156,11 +158,11 @@ void Player::updateAttack()
 	}
 	if (this->flag == 0)
 	{
-		this->damage = 50;
+		this->sahaBool = false;
 	}
 	else if (this->flag==1)
 	{
-		this->damage = 200;
+		this->sahaBool = true;
 		this->sahaSprite.setPosition(this->playerSprite.getPosition().x-this->sahaSprite.getGlobalBounds().width/2+50,this->playerSprite.getPosition().y-this->sahaSprite.getGlobalBounds().height/2+45);
 	}
 	if (this->fireRateflag == 1)

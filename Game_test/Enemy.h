@@ -31,6 +31,11 @@ private:
 	int dmg;
 	int movementSpeed;
 	int type;
+
+	sf::Vector2f playerPos;
+	sf::Vector2f center;
+	sf::FloatRect playerBounds;
+	bool check;
 	
 public:
 	Enemy(sf::Texture* texture, float posX, float posY, int speed,int hp,int dmg,int score,int rand);
@@ -45,7 +50,7 @@ public:
 	inline int Dmg() { return this->dmg; }
 	inline int getType() { return this->type; }
 
-	void updateEnemy();
+	void updateEnemy(sf::Vector2f playerPos, sf::Vector2f center, sf::FloatRect playerBounds);
 	void loseHp(int var);
 	void updateAnimation(int row, float deltatime);
 	void render(sf::RenderTarget* target);

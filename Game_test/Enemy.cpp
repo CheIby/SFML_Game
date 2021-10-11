@@ -29,10 +29,43 @@ const sf::FloatRect Enemy::getBounds() const
     return this->enemy.getGlobalBounds();
 }
 
-void Enemy::updateEnemy()
+void Enemy::updateEnemy(sf::Vector2f playerPos,sf::Vector2f center,sf::FloatRect playerBounds)
 {
-    this->enemy.move(this->movementSpeed*1, 0);
-    this->enemy.setTextureRect(uvRect);
+    this->playerPos = playerPos;
+    this->center = center;
+    this->playerBounds = playerBounds;
+    if (this->type == 0)
+    {
+        if (this->enemy.getPosition().x < this->playerPos.x)
+        {
+            this->enemy.move(this->movementSpeed, 0);
+            this->enemy.setTextureRect(uvRect);
+        }
+        if (this->playerPos.y > this->enemy.getPosition().y)
+        {
+            check = true;
+        }
+        else if (this->playerPos.y < this->enemy.getPosition().y)
+        {
+            check = false;
+        }
+        if (check)
+        {
+            this->enemy.move(this->movementSpeed, 1);
+            this->enemy.setTextureRect(uvRect);
+        }
+        else
+        {
+            this->enemy.move(this->movementSpeed, -1);
+            this->enemy.setTextureRect(uvRect);
+        }
+    }
+    else
+    {
+        this->enemy.move(this->movementSpeed, 0);
+        this->enemy.setTextureRect(uvRect);
+    }
+    
 }
 
 void Enemy::loseHp(int var)
