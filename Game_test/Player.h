@@ -19,6 +19,8 @@ public:
 	sf::Vector2u playerTextureSize;
 	sf::Sprite playerSprite;
 	sf::RectangleShape* player;
+	sf::RectangleShape hpbar;
+	sf::RectangleShape hpbarBack;
 
 	sf::Texture sahaTexture;
 	sf::Sprite sahaSprite;
@@ -26,6 +28,7 @@ public:
 	//status
 	int hpMax;
 	int hp;
+	float hpPercent;
 	int damage;
 	float movementSpeed;
 	float cooldown;

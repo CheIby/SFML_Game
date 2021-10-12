@@ -18,6 +18,8 @@ class Enemy
 private:
 	sf::Sprite enemy;
 	sf::Texture* enemytexture;
+	sf::RectangleShape hpbar;
+	sf::RectangleShape hpbarBack;
 
 	//animation
 	float switchTime;
@@ -27,14 +29,13 @@ private:
 
 	int hpMax;
 	int hp;
+	float hpPercent;
 	int points;
 	int dmg;
 	int movementSpeed;
 	int type;
 
 	sf::Vector2f playerPos;
-	sf::Vector2f center;
-	sf::FloatRect playerBounds;
 	bool check;
 	
 public:
@@ -50,7 +51,7 @@ public:
 	inline int Dmg() { return this->dmg; }
 	inline int getType() { return this->type; }
 
-	void updateEnemy(sf::Vector2f playerPos, sf::Vector2f center, sf::FloatRect playerBounds);
+	void updateEnemy(sf::Vector2f playerPos);
 	void loseHp(int var);
 	void updateAnimation(int row, float deltatime);
 	void render(sf::RenderTarget* target);

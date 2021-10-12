@@ -4,10 +4,15 @@ void Game::initWindow()
 {
 	this->window = new sf::RenderWindow(sf::VideoMode(1366,768 ), "The Adventure In Space");
 	this->window->setFramerateLimit(75);
+	this->icon.loadFromFile("image/icon.jpg");
+	this->window->setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 }
 
 void Game::innitMainMenu()
 {
+	/*this->menuBuffer.loadFromFile("audio/starwar.wav");
+	this->menuSound.setBuffer(this->menuBuffer);
+	this->menuSound.setVolume(40);*/
 	this->font.loadFromFile("font/COOPBL.ttf");
 	this->menu = new mainMenu();
 	this->Newgame = new Botton(533, 300, 300, 50, &font, "NEW GAME", 40,
@@ -20,19 +25,10 @@ void Game::innitMainMenu()
 		sf::Color(1, 1, 1, 255), sf::Color(1, 1, 1, 122), sf::Color(1, 1, 1, 0));
 }
 
-//void Game::initHighScore()
-//{
-//	this->highscoreTex.loadFromFile("image/mainmenu.jpg");
-//	this->highScoreSpirte.setTexture(this->highscoreTex);
-//	file = fopen("./highscore.txt", "r");
-//	for (int i = 0; i < 5; i++)
-//	{
-//		fscanf(file, "%s", temp);
-//		playerName[i] = temp;
-//		fscanf(file, "%d", scoreArr[i]);
-//		highScore.push_back(std::make_pair(scoreArr[i], playerName[i]));
-//	}
-//}
+void Game::initHighScore()
+{
+	this->highscore = new Highscore();
+}
 
 void Game::initBackground()
 {
@@ -47,6 +43,9 @@ void Game::initBackground()
 
 void Game::initItem()
 {
+	this->itemBuffer.loadFromFile("audio/item.wav");
+	this->itemSound.setBuffer(this->itemBuffer);
+	this->itemSound.setVolume(60);
 	this->itemTexture[0].loadFromFile("image/item1.png");
 	this->itemTexture[1].loadFromFile("image/item2.png");
 	this->itemTexture[2].loadFromFile("image/item3.png");
@@ -58,20 +57,29 @@ void Game::initItem()
 void Game::initVar()
 {
 	this->gui = new GUI();
+	this->buffer.loadFromFile("audio/vader.wav");
+	this->sound.setBuffer(buffer);
+	this->sound.setVolume(40);
 	this->itemSpawnTimerMax = 15.f; 
-	this->spawnEnemyTimerMax = 20.f;
+	this->spawnEnemyTimerMax = 80.f;
 	this->updateSpawmTimer = 10000;
 }
 
 void Game::initPlayer()
 {
 	this->player = new Player();
+	this->oofBuffer.loadFromFile("audio/oof.wav");
+	this->oof.setBuffer(this->oofBuffer);
+	this->oof.setVolume(50);
 	this->player->Animation(&this->player->playerTexture, sf::Vector2u(3, 1), 0.2f);
 	this->player->setPosition(20, this->window->getSize().y / 2 - (this->player->getBounds().height / 2));
 }
 
 void Game::initBullet()
 {
+	this->hitBuffer.loadFromFile("audio/hit.wav");
+	this->hitSound.setBuffer(this->hitBuffer);
+	this->hitSound.setVolume(50);
 	this->bulletFlag = 0;
 	this->bulletTexture["BULLET"] = new sf::Texture();
 	this->bulletTexture["BULLET"]->loadFromFile("image/bullet.png");
@@ -80,12 +88,15 @@ void Game::initBullet()
 
 void Game::initEnemy()
 {
+	this->expoBuffer.loadFromFile("audio/expo.wav");
+	this->expoSound.setBuffer(this->expoBuffer);
+	this->expoSound.setVolume(20);
 	this->Enemies[0].loadFromFile("image/moveEnemy1.png");
 	this->Enemies[1].loadFromFile("image/moveEnemy2.png");
 	this->enemySpeed[0] =-(rand() % 5 + 2);
 	this->enemySpeed[1] =-(rand() % 5 + 4);
 	this->enemyHP[0] = 150;
-	this->enemyHP[1] = 50;
+	this->enemyHP[1] = 100;
 	this->enemyScore[0] = 100;
 	this->enemyScore[1] = 200;
 	this->enemyDmg[0] = 50;
@@ -95,7 +106,7 @@ Game::Game()
 {
 	this->initVar();
 	this->innitMainMenu();
-	/*this->initHighScore();*/
+	this->initHighScore();
 	this->initBackground();
 	this->initItem();
 	this->initBullet();
@@ -106,8 +117,10 @@ Game::Game()
 
 Game::~Game()
 {
+	delete this->window;
 	delete this->player;
 	delete this->menu;
+	delete this->highscore;
 	delete this->Newgame;
 	delete this->HighScore;
 	delete this->Exit;
@@ -130,7 +143,7 @@ Game::~Game()
 	{
 		delete i;
 	}
-	
+
 }
 
 void Game::updatePullEvent()
@@ -144,19 +157,13 @@ void Game::updatePullEvent()
 
 void Game::updateMenu()
 {
-	
 	this->Newgame->update(this->mousePos);
 	this->Exit->update(this->mousePos);
 	this->HighScore->update(this->mousePos);
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::G))
-	{
-		this->gameOn = 1;
-		this->menuOn = 0;
-		this->scoreOn = 0;
-		this->gamOverOn = 0;
-	}
 	if (this->Newgame->isPressed())
 	{
+		this->sound.play();
+		this->sound.setLoop(true);
 		this->gameOn = 1;
 		this->menuOn = 0;
 		this->scoreOn = 0;
@@ -175,28 +182,18 @@ void Game::updateMenu()
 	}
 }
 
-//void Game::updateHighScore()
-//{
-//	highScore.erase(highScore.begin(), highScore.end());
-//	file = fopen("./highsocore.txt", "r");
-//	for (int i = 0; i < 5; i++)
-//	{
-//		fscanf_s(file, "%s", temp);
-//		playerName[i] = temp;
-//		fscanf_s(file, "%d", scoreArr[i]);
-//		highScore.push_back(std::make_pair(scoreArr[i], playerName[i]));
-//	}
-//
-//	this->Back->update(this->mousePos);
-//	if (this->Back->isPressed())
-//	{
-//		this->gameOn = 0;
-//		this->menuOn = 1;
-//		this->scoreOn = 0;
-//		this->gamOverOn = 0;
-//	}
-//
-//}
+void Game::updateHighScore()
+{
+	this->Back->update(this->mousePos);
+	if (this->Back->isPressed())
+	{
+		this->gameOn = 0;
+		this->menuOn = 1;
+		this->scoreOn = 0;
+		this->gamOverOn = 0;
+	}
+
+}
 
 void Game::updateInput()
 {
@@ -211,6 +208,7 @@ void Game::updateInput()
 		this->player->move(0.f, 1.f);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && this->player->canAttack())
 	{
+		this->hitSound.play();
 		this->bullets.push_back(new Bullet(this->bulletTexture["BULLET"],
 			this->player->getPos().x + this->player->getBounds().width/2, 
 			this->player->getPos().y + this->player->getBounds().height/2, 
@@ -249,8 +247,8 @@ void Game::updateSpawnTimer()
 	{
 		this->timer = 0;
 		this->spawnEnemyTimerMax -= 10;
-		if (this->spawnEnemyTimerMax <= 10)
-			this->spawnEnemyTimerMax = 10;
+		if (this->spawnEnemyTimerMax <= 20)
+			this->spawnEnemyTimerMax = 20;
 	}
 	this->timer += 5;
 }
@@ -281,7 +279,7 @@ void Game::updateEnemy()
 	
 	for (int i = 0; i < enemies.size(); i++)
 	{
-		this->enemies[i]->updateEnemy(this->player->getPos(),this->player->getCenter(),this->player->getBounds());
+		this->enemies[i]->updateEnemy(this->player->getPos());
 		this->enemies[i]->updateAnimation(0,this->deltaTime);
 		
 		if (this->enemies[i]->getPos().x < 0 - this->enemies[i]->getBounds().width)
@@ -290,9 +288,9 @@ void Game::updateEnemy()
 		}
 		else if (enemies[i]->getBounds().intersects(this->player->getBounds()))
 		{
-
 			if (this->player->getSaha())
 			{
+				this->expoSound.play();
 				this->gui->updatePoint(this->enemies[i]->Point());
 				this->gui->updatetype(this->enemies[i]->getType());
 				delete this->enemies[i];
@@ -300,6 +298,7 @@ void Game::updateEnemy()
 			}
 			else
 			{
+				this->oof.play();
 				this->player->updateHp(this->enemies[i]->Dmg());
 				this->player->collisionPlayer();
 				if (this->player->getHp() == 0)
@@ -332,6 +331,7 @@ void Game::updateItem()
 		this->items[i]->updateItem();
 		if (this->items[i]->getBounds().intersects(this->player->getBounds()))
 		{
+			this->itemSound.play();
 			if (this->items[i]->itemType() == 0)
 			{
 				this->player->plusHp(rand()%100+101);
@@ -387,6 +387,7 @@ void Game::updateCombat()
 				this->enemies[j]->loseHp(this->player->damage);
 				if (this->enemies[j]->currentHP() == 0)
 				{
+					this->expoSound.play();
 					this->gui->updatePoint(this->enemies[j]->Point());
 					this->gui->updatetype(this->enemies[j]->getType());
 					delete this->enemies[j];
@@ -431,13 +432,13 @@ void Game::renderMenu()
 	this->window->display();
 }
 
-//void Game::renderHigh()
-//{
-//	this->window->clear();
-//	this->window->draw(this->highScoreSpirte);
-//	this->Back->render(this->window);
-//	this->window->display();
-//}
+void Game::renderHigh()
+{
+	this->window->clear();
+	this->highscore->render(this->window);
+	this->Back->render(this->window);
+	this->window->display();
+}
 
 void Game::render()
 {
@@ -478,11 +479,11 @@ void Game::run()
 			this->updateMenu();
 			this->renderMenu();
 		}
-		/*if (scoreOn)
+		if (scoreOn)
 		{
 			this->updateHighScore();
 			this->renderHigh();
-		}*/
+		}
 		if (gameOn)
 		{
 			this->update();

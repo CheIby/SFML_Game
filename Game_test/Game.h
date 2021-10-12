@@ -10,15 +10,19 @@
 #include "Item.h"
 #include "mainMenu.h"
 #include "Botton.h"
+#include "Highscore.h"
 
 //void showText(sf::Vector2f position, std::string word, sf::Font* font, int size, sf::RenderWindow& window);
 
 class Game
 {
 private:
+	sf::Image icon;
 	sf::Event ev;
 	sf::RenderWindow* window;
 	sf::Clock clock;
+
+	float windowX;
 	float deltaTime;
 	bool menuOn = 1;
 	bool gameOn = 0;
@@ -27,14 +31,11 @@ private:
 	
 	//mainmenu
 	mainMenu *menu;
+	sf::SoundBuffer menuBuffer;
+	sf::Sound menuSound;
 
 	//highscore
-	std::vector<std::pair<int, std::string>> highScore;
-	std::FILE* file;
-	char temp[25];
-	std::string playerName[6];
-	int scoreArr[6];
-	bool collectHS = false;
+	Highscore *highscore;
 
 	//botton
 	sf::Vector2i mouse;
@@ -55,6 +56,8 @@ private:
 
 	//Item
 	std::vector<Item*> items;
+	sf::SoundBuffer itemBuffer;
+	sf::Sound itemSound;
 	float itemSpawnTimer;
 	float itemSpawnTimerMax;
 	float setScale[3];
@@ -63,6 +66,8 @@ private:
 	sf::Sprite itemSprite;
 	
 	//bullet
+	sf::SoundBuffer hitBuffer;
+	sf::Sound hitSound;
 	std::map<std::string, sf::Texture*> bulletTexture;
 	std::vector<Bullet*> bullets;
 	int bulletFlag;
@@ -71,6 +76,8 @@ private:
 
 	//enemy
 	std::vector<Enemy*> enemies;
+	sf::SoundBuffer expoBuffer;
+	sf::Sound expoSound;
 	float spawnEnemyTimer;
 	float spawnEnemyTimerMax;
 	sf::Texture Enemies[2];
@@ -86,6 +93,8 @@ private:
 
 	//Gui
 	GUI* gui;
+	sf::SoundBuffer buffer;
+	sf::Sound sound;
 	
 	//explosion
 	sf::Texture expoTexture;
@@ -104,6 +113,8 @@ private:
 
 	//player
 	Player* player;
+	sf::SoundBuffer oofBuffer;
+	sf::Sound oof;
 
 public:
 	Game();
