@@ -30,6 +30,7 @@ public:
 		sf::Color idleColor, sf::Color hoverColor, sf::Color activeColor);
 	virtual ~Botton();
 
+	inline sf::FloatRect getGobalBounds() { return this->bottonShape.getGlobalBounds(); }
 	const bool isPressed() const;
 	void update(const sf::Vector2f mousePos);
 	void render(sf::RenderTarget *target);

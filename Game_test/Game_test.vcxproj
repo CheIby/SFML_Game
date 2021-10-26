@@ -149,7 +149,10 @@
     <ClCompile Include="Botton.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="Entername.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameOver.cpp" />
+    <ClCompile Include="Gamepause.cpp" />
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="Highscore.cpp" />
     <ClCompile Include="Item.cpp" />
@@ -162,7 +165,10 @@
     <ClInclude Include="Botton.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="Entername.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameOver.h" />
+    <ClInclude Include="Gamepause.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="Highscore.h" />
     <ClInclude Include="Item.h" />

@@ -28,12 +28,10 @@ Background::~Background()
 
 void Background::updateBackground(float deltatime)
 {
-	
 	for (int j = 0; j < 2; j++)
 	{
 		this->position = object[j].getPosition();
-		this->object[j].move(this->speed * deltatime, 0);
-		
+		this->object[j].move(round( this->speed * deltatime), 0);
 		if (this->position.x <= -windowSize.x && this->speed < 0)
 		{
 			this->object[j].setPosition(windowSize.x-2.f , this->position.y);

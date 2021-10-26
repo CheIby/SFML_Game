@@ -3,6 +3,12 @@
 
 void Player::initStatus()
 {
+	this->gameReset = 0;
+	if (gameReset=1)
+	{
+		this->hp = this->hpMax;
+		this->gameReset = 0;
+	}
 	this->damage = 50;
 	this->hpMax = 1000;
 	this->hp = this->hpMax;
@@ -203,7 +209,6 @@ void Player::updateAttack()
 	{
 		this->playerSprite.setTexture(this->playerTexture);
 	}
-	std::cout << this->collision << "\n";
 }
 
 void Player::updatePlayer()

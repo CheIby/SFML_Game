@@ -65,7 +65,7 @@ public:
 	virtual ~Player();
 
 	sf::IntRect uvRect;
-
+	bool gameReset;
 	const sf::Vector2f& getPos() const;
 	const sf::FloatRect getBounds() const;
 

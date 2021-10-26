@@ -3,39 +3,33 @@
 
 void Highscore::initHighscore()
 {
-	if (!(this->high = fopen("BackEn/highscore.txt", "r")))
-	{
-		std::cout << "error";
-	}
-	for (int i = 0; i < 5; i++)
-	{
-		fscanf(this->high, "%s", &this->temp);
-		this->name[i] = this->temp;
-		this->playerName[i].setString(this->name[i]);
-		fscanf(this->high, "%d", &this->score[i]);
-		this->playerScore[i].setString(std::to_string(this->score[i]));
-		this->userScore.push_back(std::make_pair(this->score[i], this->name[i]));
-	}
-}
-
-void Highscore::initText()
-{
 	this->font.loadFromFile("font/COOPBL.ttf");
 	this->scoreBoardText.setFont(this->font);
-	this->scoreBoardText.setCharacterSize(60.f);
+	this->scoreBoardText.setCharacterSize(60);
 	this->scoreBoardText.setFillColor(sf::Color::White);
 	this->scoreBoardText.setString("Leader Board");
-	this->scoreBoardText.setPosition((this->windowX/2)-(this->scoreBoardText.getGlobalBounds().width/2),50);
+	this->scoreBoardText.setPosition((this->windowX / 2) - (this->scoreBoardText.getGlobalBounds().width / 2), 50);
+	this->high = fopen("BackEn/highscore.txt", "r");
 	for (int i = 0; i < 5; i++)
 	{
+		fscanf(high, "%s", &temp);
+		name[i] = temp;
+		fscanf(high, "%d", &score[i]);
+		this->userScore.push_back(std::make_pair(this->score[i], this->name[i]));
+	}
+	fclose(this->high);
+	for (int i = 0; i < 5; i++)
+	{
+		this->playerName[i].setString(this->name[i]);
+		this->playerScore[i].setString(std::to_string(this->score[i]));
 		this->playerName[i].setFont(this->font);
-		this->playerName[i].setCharacterSize(30.f);
+		this->playerName[i].setCharacterSize(30);
 		this->playerName[i].setFillColor(sf::Color::White);
-		this->playerName[i].setPosition((this->windowX/2)-(this->scoreBoardText.getGlobalBounds().width/2),200+100*i);
+		this->playerName[i].setPosition((this->windowX / 2) - (this->scoreBoardText.getGlobalBounds().width / 2), 200 + 100 * i);
 		this->playerScore[i].setFont(this->font);
 		this->playerScore[i].setCharacterSize(30.f);
 		this->playerScore[i].setFillColor(sf::Color::White);
-		this->playerScore[i].setPosition((this->windowX / 2) + (this->scoreBoardText.getGlobalBounds().width / 2), 200+ 100 * i);
+		this->playerScore[i].setPosition((this->windowX / 2) + (this->scoreBoardText.getGlobalBounds().width / 2), 200 + 100 * i);
 	}
 }
 
@@ -48,13 +42,13 @@ void Highscore::initBackground()
 Highscore::Highscore()
 {
 	this->initHighscore();
-	this->initText();
 	this->initBackground();
 }
 
 Highscore::~Highscore()
 {
-
+	this->backgroundTexture;
+	this->background;
 }
 
 void Highscore::render(sf::RenderTarget* target)

@@ -2,6 +2,16 @@
 
 #ifndef GAME_H
 #define GAME_H
+#include <vector>
+#include <iostream>
+#include <ctime>
+#include <cstdlib>
+#include <sstream>
+#include <stdlib.h>
+#include <fstream>
+#include <utility>
+#include <algorithm>
+
 #include "Player.h"
 #include "Background.h"
 #include "Bullet.h"
@@ -11,6 +21,9 @@
 #include "mainMenu.h"
 #include "Botton.h"
 #include "Highscore.h"
+#include "GameOver.h"
+#include "Gamepause.h"
+#include "Entername.h"
 
 //void showText(sf::Vector2f position, std::string word, sf::Font* font, int size, sf::RenderWindow& window);
 
@@ -25,7 +38,9 @@ private:
 	float windowX;
 	float deltaTime;
 	bool menuOn = 1;
+	bool inputName = 0;
 	bool gameOn = 0;
+	bool gameStop = 0;
 	bool scoreOn = 0;
 	bool gamOverOn = 0;
 	
@@ -45,6 +60,15 @@ private:
 	Botton *Exit;
 	Botton* HighScore;
 	Botton* Back;
+	Botton* Play;
+	Botton* BackInput;
+	Botton* Continuous;
+	Botton* ExitGamePause;
+	Botton* GoToHighScore;
+	Botton* ExtitGame;
+	
+	Entername* enterName;
+	std::vector<sf::Event> textName;
 
 	//background
 	sf::Texture highscoreTex;
@@ -96,14 +120,14 @@ private:
 	sf::SoundBuffer buffer;
 	sf::Sound sound;
 	
-	//explosion
-	sf::Texture expoTexture;
-	sf::Sprite expoSprite;
-
 	//con
 	void initWindow();
 	void innitMainMenu();
 	void initHighScore();
+	void initEnterName();
+	void initGamePause();
+	void initGameOver();
+	void initGame();
 	void initBackground();
 	void initItem();
 	void initVar();
@@ -111,10 +135,15 @@ private:
 	void initBullet();
 	void initEnemy();
 
+	Gamepause *gamePause;
+
 	//player
 	Player* player;
 	sf::SoundBuffer oofBuffer;
 	sf::Sound oof;
+
+	GameOver* gameOver;
+	
 
 public:
 	Game();
@@ -124,6 +153,9 @@ public:
 
 	void updateMenu();
 	void updateHighScore();
+	void updateEnterName();
+	void updateGamePause();
+	void updateGameOver();
 
 	void updateInput();
 	void updateCollisionWorld();
@@ -135,9 +167,13 @@ public:
 	void updateCombat();
 	void updateGui();
 	void update();
+	void gameRestart();
 
 	void renderMenu();
 	void renderHigh();
+	void renderEnterName();
+	void renderGamePause();
+	void renderGameOver();
 	void render();
 	void run ();
 };

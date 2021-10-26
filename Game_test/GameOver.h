@@ -1,5 +1,5 @@
-#ifndef HIGHSCORE_H
-#define HIGHSCORE_H
+#ifndef  GAMEOVER_H
+#define GAMEOVER_H
 
 #include <vector>
 #include <iostream>
@@ -17,34 +17,32 @@
 #include "SFML/Network.hpp"
 #include "SFML/Window.hpp"
 
-class Highscore
+class GameOver
 {
 private:
-	float windowX=1366;
+	float windowX = 1366;
 	sf::Texture backgroundTexture;
 	sf::Sprite background;
 
-	FILE* high;
+	FILE* fq;
 	sf::Font font;
-	sf::Text scoreBoardText;
-
-	sf::Text num[5];
-	sf::Text playerName[5];
-	sf::Text playerScore[5];
+	sf::Text GameOverText;
+	sf::Text yourScore;
 
 	char temp[255];
 	int score[6];
 	std::string name[6];
-
 	std::vector <std::pair<int, std::string>> userScore;
+	unsigned int finalScore;
 
-	void initHighscore();
 	void initBackground();
-
+	void initText();	
 public:
-	Highscore();
-	virtual ~Highscore();
+	GameOver();
+	virtual ~GameOver();
+	void getScore(unsigned int score);
+	void updateHigh(std::string name, unsigned int score);
 	void render(sf::RenderTarget* target);
 };
 
-#endif // !HIGHSCORE_H
+#endif // ! GAMEOVER_H

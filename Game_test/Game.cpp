@@ -1,5 +1,5 @@
 #include "Game.h"
-
+#define _CRT_SECURE_NO_WARNINGS
 void Game::initWindow()
 {
 	this->window = new sf::RenderWindow(sf::VideoMode(1366,768 ), "The Adventure In Space");
@@ -21,13 +21,95 @@ void Game::innitMainMenu()
 		sf::Color(1, 1, 1, 255), sf::Color(1, 1, 1, 122), sf::Color(1, 1, 1, 0));
 	this->Exit = new Botton(533, 500, 300, 50, &font, "EXIT", 40,
 		sf::Color(1, 1, 1, 255), sf::Color(1, 1, 1, 122), sf::Color(1, 1, 1, 0));
-	this->Back = new Botton(25, 25, 150, 50, &font, "BACK", 40,
-		sf::Color(1, 1, 1, 255), sf::Color(1, 1, 1, 122), sf::Color(1, 1, 1, 0));
 }
 
 void Game::initHighScore()
 {
 	this->highscore = new Highscore();
+	this->Back = new Botton(25, 25, 150, 50, &font, "BACK", 40,
+		sf::Color(1, 1, 1, 255), sf::Color(1, 1, 1, 122), sf::Color(1, 1, 1, 0));
+}
+
+void Game::initEnterName()
+{
+	this->enterName = new Entername();
+	this->BackInput = new Botton(100, 100, 150, 50, &font, "BACK", 40,
+		sf::Color(1, 1, 1, 255), sf::Color(1, 1, 1, 122), sf::Color(1, 1, 1, 0));
+	this->Play = new Botton(500, 200, 150, 50, &font, "PLAY", 40,
+		sf::Color(1, 1, 1, 255), sf::Color(1, 1, 1, 122), sf::Color(1, 1, 1, 0));
+}
+
+void Game::initGamePause()
+{
+	this->gamePause = new Gamepause();
+	this->Continuous= new Botton(533, 300, 300, 50, &font, "COUNTINUOUS", 40,
+		sf::Color(1, 1, 1, 255), sf::Color(1, 1, 1, 122), sf::Color(1, 1, 1, 0));
+	this->ExitGamePause = new Botton(533, 400, 300, 50, &font, "EXIT GAME", 40,
+		sf::Color(1, 1, 1, 255), sf::Color(1, 1, 1, 122), sf::Color(1, 1, 1, 0));
+}
+
+void Game::initGameOver()
+{
+	this->gameOver = new GameOver();
+	this->GoToHighScore = new Botton(300, 300, 300, 50, &font, "HIGH SCORE", 40,
+		sf::Color(1, 1, 1, 255), sf::Color(1, 1, 1, 122), sf::Color(1, 1, 1, 0));
+	this->ExtitGame = new Botton(300, 400, 300, 50, &font, "EXIT GAME", 40,
+		sf::Color(1, 1, 1, 255), sf::Color(1, 1, 1, 122), sf::Color(1, 1, 1, 0));
+}
+
+void Game::initGame()
+{
+	this->backgroundTexture[0].loadFromFile("image/sky.png");
+	this->backgroundTexture[1].loadFromFile("image/mountain.png");
+	this->backgrounds.push_back(Background(&this->backgroundTexture[0], -50.f));
+	this->backgrounds.push_back(Background(&this->backgroundTexture[1], -200.f));
+	this->background2Texture.loadFromFile("image/sky2.png");
+	this->background2.setSize(sf::Vector2f(1366, 768));
+	this->background2.setTexture(&background2Texture);
+
+	this->itemBuffer.loadFromFile("audio/item.wav");
+	this->itemSound.setBuffer(this->itemBuffer);
+	this->itemSound.setVolume(60);
+	this->itemTexture[0].loadFromFile("image/item1.png");
+	this->itemTexture[1].loadFromFile("image/item2.png");
+	this->itemTexture[2].loadFromFile("image/item3.png");
+	this->setScale[0] = 0.4f;
+	this->setScale[1] = 0.4f;
+	this->setScale[2] = 0.4f;
+
+	this->gui = new GUI();
+	this->buffer.loadFromFile("audio/vader.wav");
+	this->sound.setBuffer(buffer);
+	this->sound.setVolume(40);
+	this->itemSpawnTimerMax = 15.f;
+	this->spawnEnemyTimerMax = 80.f;
+	this->updateSpawmTimer = 10000;
+
+	this->player = new Player();
+	this->oofBuffer.loadFromFile("audio/oof.wav");
+	this->oof.setBuffer(this->oofBuffer);
+	this->oof.setVolume(50);
+	this->player->Animation(&this->player->playerTexture, sf::Vector2u(3, 1), 0.2f);
+	this->player->setPosition(20, this->window->getSize().y / 2 - (this->player->getBounds().height / 2));
+
+	this->hitBuffer.loadFromFile("audio/hit.wav");
+	this->hitSound.setBuffer(this->hitBuffer);
+	this->hitSound.setVolume(50);
+	this->bulletFlag = 0;
+	this->bulletTexture["BULLET"] = new sf::Texture();
+	this->bulletTexture["BULLET"]->loadFromFile("image/bullet.png");
+	this->flagcooldownMax = 50.f;
+
+	this->expoBuffer.loadFromFile("audio/expo.wav");
+	this->expoSound.setBuffer(this->expoBuffer);
+	this->expoSound.setVolume(20);
+	this->Enemies[0].loadFromFile("image/moveEnemy1.png");
+	this->Enemies[1].loadFromFile("image/moveEnemy2.png");
+	this->enemyHP[0] = 150;
+	this->enemyHP[1] = 100;
+	this->enemyScore[0] = 100;
+	this->enemyScore[1] = 200;
+	this->enemyDmg[0] = 50;
 }
 
 void Game::initBackground()
@@ -43,6 +125,7 @@ void Game::initBackground()
 
 void Game::initItem()
 {
+
 	this->itemBuffer.loadFromFile("audio/item.wav");
 	this->itemSound.setBuffer(this->itemBuffer);
 	this->itemSound.setVolume(60);
@@ -93,8 +176,6 @@ void Game::initEnemy()
 	this->expoSound.setVolume(20);
 	this->Enemies[0].loadFromFile("image/moveEnemy1.png");
 	this->Enemies[1].loadFromFile("image/moveEnemy2.png");
-	this->enemySpeed[0] =-(rand() % 5 + 2);
-	this->enemySpeed[1] =-(rand() % 5 + 4);
 	this->enemyHP[0] = 150;
 	this->enemyHP[1] = 100;
 	this->enemyScore[0] = 100;
@@ -104,26 +185,28 @@ void Game::initEnemy()
 
 Game::Game()
 {
-	this->initVar();
-	this->innitMainMenu();
-	this->initHighScore();
-	this->initBackground();
-	this->initItem();
-	this->initBullet();
-	this->initEnemy();
 	this->initWindow();
-	this->initPlayer();
+	this->innitMainMenu();
+	this->initEnterName();
+	this->initGamePause();
 }
 
 Game::~Game()
 {
 	delete this->window;
+	delete this->gui;
 	delete this->player;
 	delete this->menu;
 	delete this->highscore;
 	delete this->Newgame;
 	delete this->HighScore;
 	delete this->Exit;
+	delete this->Back;
+	delete this->BackInput;
+	delete this->Play;
+	delete this->Continuous;
+	delete this->ExtitGame;
+
 	for (auto& i : this->bulletTexture)
 	{
 		delete i.second;
@@ -150,8 +233,17 @@ void Game::updatePullEvent()
 {
 	while (this->window->pollEvent(ev))
 	{
-		if (ev.Event::type == sf::Event::Closed)
+		switch (ev.type)
+		{
+		case sf::Event::Closed:
 			this->window->close();
+			break;
+		case sf::Event::TextEntered:
+			this->textName.push_back(ev);
+			break;
+		}
+		//if (ev.Event::type == sf::Event::Closed)
+		//	this->window->close();
 	}
 }
 
@@ -162,18 +254,23 @@ void Game::updateMenu()
 	this->HighScore->update(this->mousePos);
 	if (this->Newgame->isPressed())
 	{
-		this->sound.play();
-		this->sound.setLoop(true);
-		this->gameOn = 1;
+		/*this->sound.play();
+		this->sound.setLoop(true);*/
+		this->gameOn = 0;
+		this->inputName = 1;
 		this->menuOn = 0;
 		this->scoreOn = 0;
+		this->gameStop = 0;
 		this->gamOverOn = 0;
 	}
 	if (this->HighScore->isPressed())
 	{
+		this->initHighScore();
 		this->gameOn = 0;
+		this->inputName = 0;
 		this->menuOn = 0;
 		this->scoreOn = 1;
+		this->gameStop = 0;
 		this->gamOverOn = 0;
 	}
 	if (this->Exit->isPressed())
@@ -188,11 +285,89 @@ void Game::updateHighScore()
 	if (this->Back->isPressed())
 	{
 		this->gameOn = 0;
+		this->inputName = 0;
 		this->menuOn = 1;
 		this->scoreOn = 0;
+		this->gameStop = 0;
 		this->gamOverOn = 0;
 	}
+}
 
+void Game::updateEnterName()
+{
+	this->window->clear();
+	this->enterName->enterName(this->textName);
+	this->BackInput->update(this->mousePos);
+	this->Play->update(this->mousePos);
+	if (this->Play->isPressed())
+	{
+		this->initGame();
+		this->gameOn = 1;
+		this->inputName = 0;
+		this->menuOn = 0;
+		this->scoreOn = 0;
+		this->gameStop = 0;
+		this->gamOverOn = 0;
+	}
+	if (this->BackInput->isPressed())
+	{
+		this->gameOn = 0;
+		this->inputName = 0;
+		this->menuOn = 1;
+		this->scoreOn = 0;
+		this->gameStop = 0;
+		this->gamOverOn = 0;
+	}
+	this->enterName->render(this->window);
+	this->Play->render(this->window);
+	this->BackInput->render(this->window);
+	std::cout << this->enterName->getPlayerName();
+	this->window->display();
+}
+
+void Game::updateGamePause()
+{
+	this->Continuous->update(this->mousePos);
+	this->ExitGamePause->update(this->mousePos);
+	if (this->Continuous->isPressed())
+	{
+		this->gameOn = 1;
+		this->inputName = 0;
+		this->menuOn = 0;
+		this->scoreOn = 0;
+		this->gameStop = 0;
+		this->gamOverOn = 0;
+	}
+	if (this->ExitGamePause->isPressed())
+	{
+		this->window->close();
+	}
+}
+
+void Game::updateGameOver()
+{
+	
+	this->GoToHighScore->update(this->mousePos);
+	this->ExtitGame->update(this->mousePos);
+	if (this->GoToHighScore->isPressed())
+	{
+		this->initHighScore();
+		this->gameOn = 0;
+		this->inputName = 0;
+		this->menuOn = 0;
+		this->scoreOn = 1;
+		this->gameStop = 0;
+		this->gamOverOn = 0;
+	}
+	if (this->ExtitGame->isPressed())
+	{
+		this->gameOn = 0;
+		this->inputName = 0;
+		this->menuOn = 1;
+		this->scoreOn = 0;
+		this->gameStop = 0;
+		this->gamOverOn = 0;
+	}
 }
 
 void Game::updateInput()
@@ -255,13 +430,13 @@ void Game::updateSpawnTimer()
 
 void Game::updateAnimation()
 {
-	
 	//player
 	this->player->updateAnmation(0,this->deltaTime);
 	this->player->playerSprite.setTextureRect(player->uvRect);
 	//background
 	for (Background& background : backgrounds)
 		background.updateBackground(deltaTime);
+	std::cout << "update Animation\n";
 }
 
 void Game::updateEnemy()
@@ -269,8 +444,10 @@ void Game::updateEnemy()
 	this->spawnEnemyTimer += 0.5f;
 	if (this->spawnEnemyTimer >= this->spawnEnemyTimerMax)
 	{
-		this->enemyDmg[1] = rand() % 150 + 101;
 		this->random = rand() % 2;
+		this->enemySpeed[0] = -(rand() % 5 + 2);
+		this->enemySpeed[1] = -(rand() % 5 + 4);
+		this->enemyDmg[1] = rand() % 150 + 101;
 		this->PosX = this->window->getSize().x + 100.f;
 		this->PosY = this->window->getSize().y - ((rand() % this->window->getSize().y-200) +100.f);
 		this->enemies.push_back(new Enemy(&this->Enemies[random], this->PosX, this->PosY, this->enemySpeed[random], this->enemyHP[random], this->enemyDmg[random], this->enemyScore[random],this->random));
@@ -303,10 +480,16 @@ void Game::updateEnemy()
 				this->player->collisionPlayer();
 				if (this->player->getHp() == 0)
 				{
+					this->initGameOver();
+					this->sound.stop();
+					this->gameOver->getScore(this->gui->getScore());
+					this->gameOver->updateHigh(this->enterName->getPlayerName(), this->gui->getScore());
 					this->gameOn = 0;
 					this->menuOn = 0;
 					this->scoreOn = 0;
+					this->gameStop = 0;
 					this->gamOverOn = 1;
+					this->gameRestart();
 				}
 				delete this->enemies[i];
 				this->enemies.erase(this->enemies.begin() + i);
@@ -334,7 +517,7 @@ void Game::updateItem()
 			this->itemSound.play();
 			if (this->items[i]->itemType() == 0)
 			{
-				this->player->plusHp(rand()%100+101);
+				this->player->plusHp(rand()%101+100);
 				delete this->items[i];
 				this->items.erase(this->items.begin() + i);
 			}
@@ -410,15 +593,43 @@ void Game::updateGui()
 void Game::update()
 {	
 	this->deltaTime = this->clock.restart().asSeconds();
-	this->updateSpawnTimer();
-	this->updateAnimation();
-	this->updateInput();
-	this->updateEnemy();
-	this->updateItem();
-	this->updateBullet();
-	this->updateCombat();
-	this->updateGui();
-	this->updateCollisionWorld();
+	if (gameOn)
+	{
+		
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+		{
+			
+			this->gameOn = 0;
+			this->menuOn = 0;
+			this->scoreOn = 0;
+			this->gameStop = 1;
+			this->gamOverOn = 0;
+		}
+	}
+}
+
+void Game::gameRestart()
+{
+	/*for (int i = 0; i < enemies.size(); i++)
+	{
+		delete this->enemies[i];
+		this->enemies.erase(this->enemies.begin() + i);
+	}
+	for (int i = 0; i < items.size(); i++)
+	{
+		delete this->items[i];
+		this->items.erase(this->items.begin() + i);
+	}*/
+	this->player->gameReset = 1;
+	this->player->setPosition(20, this->window->getSize().y / 2 - (this->player->getBounds().height / 2));
+	this->spawnEnemyTimerMax = 80;
+	this->gui->gameReset = 1;
+	/*this->backgrounds.clear();*/
+	/*this->enemies.clear();
+	this->items.clear();
+	this->gui->score = 0;
+	this->backgrounds.push_back(Background(&this->backgroundTexture[0], -50.f));
+	this->backgrounds.push_back(Background(&this->backgroundTexture[1], -200.f));*/
 }
 
 void Game::renderMenu()
@@ -428,7 +639,6 @@ void Game::renderMenu()
 	this->Newgame->render(this->window);
 	this->Exit->render(this->window);
 	this->HighScore->render(this->window);
-	/*showText(sf::Vector2f(660.0f, 950.0f), "63010952 Soravee Rattanaapha", &font, 40, *window);*/
 	this->window->display();
 }
 
@@ -437,6 +647,29 @@ void Game::renderHigh()
 	this->window->clear();
 	this->highscore->render(this->window);
 	this->Back->render(this->window);
+	this->window->display();
+}
+
+void Game::renderEnterName()
+{
+	
+}
+
+void Game::renderGamePause()
+{
+	this->window->clear();
+	this->gamePause->render(this->window); 
+	this->Continuous->render(this->window);
+	this->ExitGamePause->render(this->window);
+	this->window->display();
+}
+
+void Game::renderGameOver()
+{
+	this->window->clear();
+	this->gameOver->render(this->window);
+	this->GoToHighScore->render(this->window);
+	this->ExtitGame->render(this->window);
 	this->window->display();
 }
 
@@ -484,14 +717,34 @@ void Game::run()
 			this->updateHighScore();
 			this->renderHigh();
 		}
+		if (inputName)
+		{
+			this->updateEnterName();
+			/*this->renderEnterName();*/
+		}
 		if (gameOn)
 		{
 			this->update();
+			this->updateSpawnTimer();
+			this->updateAnimation();
+			this->updateInput();
+			this->updateEnemy();
+			this->updateItem();
+			this->updateBullet();
+			this->updateCombat();
+			this->updateGui();
+			this->updateCollisionWorld();
 			this->render();
+		}
+		if (gameStop)
+		{
+			this->updateGamePause();
+			this->renderGamePause();
 		}
 		if (gamOverOn)
 		{
-			this->window->close();
+			this->updateGameOver();
+			this->renderGameOver();
 		}
 	}
 }

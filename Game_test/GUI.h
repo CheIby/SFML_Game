@@ -23,8 +23,8 @@ private:
 	sf::RectangleShape playerHpBarBack;
 	sf::Texture enmeyTexture[2];
 	sf::Sprite enemySprite[2];
-	int score;
 	int type;
+	int score;
 	int check[2];
 
 	void initGUI();
@@ -32,6 +32,8 @@ private:
 public:
 	GUI();
 	virtual ~GUI();
+	bool gameReset;
+	inline int getScore() { return this->score; }
 	void updatPlayerHpBar(float percent);
 	void updatePoint(int points);
 	void currentPoint();

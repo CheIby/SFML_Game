@@ -2,6 +2,12 @@
 
 void GUI::initGUI()
 {
+	this->gameReset = 0;
+	if (gameReset=1)
+	{
+		this->score = 0;
+		this->gameReset = 0;
+	}
 	this->score = 0;
 	this->check[0] = 0;
 	this->check[1] = 0;
@@ -37,6 +43,7 @@ void GUI::initGUI()
 	this->enemySprite[1].setPosition(sf::Vector2f(1150, 30));
 	this->enemySprite[0].setScale(0.4, 0.4);
 	this->enemySprite[1].setScale(0.4, 0.4);
+	
 }
 
 GUI::GUI()
