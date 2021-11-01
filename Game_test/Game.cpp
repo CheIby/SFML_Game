@@ -6,13 +6,16 @@ void Game::initWindow()
 	this->window->setFramerateLimit(75);
 	this->icon.loadFromFile("image/icon.jpg");
 	this->window->setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+	this->State = 1;
 }
 
 void Game::innitMainMenu()
 {
-	/*this->menuBuffer.loadFromFile("audio/starwar.wav");
+	this->menuBuffer.loadFromFile("audio/starwar.wav");
 	this->menuSound.setBuffer(this->menuBuffer);
-	this->menuSound.setVolume(40);*/
+	this->menuSound.setVolume(20);
+	this->menuSound.play();
+	this->menuSound.setLoop(true);
 	this->font.loadFromFile("font/COOPBL.ttf");
 	this->menu = new mainMenu();
 	this->Newgame = new Botton(533, 300, 300, 50, &font, "NEW GAME", 40,
@@ -37,6 +40,8 @@ void Game::initEnterName()
 		sf::Color(1, 1, 1, 255), sf::Color(1, 1, 1, 122), sf::Color(1, 1, 1, 0));
 	this->Play = new Botton(500, 200, 150, 50, &font, "PLAY", 40,
 		sf::Color(1, 1, 1, 255), sf::Color(1, 1, 1, 122), sf::Color(1, 1, 1, 0));
+	this->exEnemy[0].loadFromFile("image/moveEnemy1.png");
+	this->exEnemy[1].loadFromFile("image/moveEnemy2.png");
 }
 
 void Game::initGamePause()
@@ -57,61 +62,6 @@ void Game::initGameOver()
 		sf::Color(1, 1, 1, 255), sf::Color(1, 1, 1, 122), sf::Color(1, 1, 1, 0));
 }
 
-void Game::initGame()
-{
-	this->backgroundTexture[0].loadFromFile("image/sky.png");
-	this->backgroundTexture[1].loadFromFile("image/mountain.png");
-	this->backgrounds.push_back(Background(&this->backgroundTexture[0], -50.f));
-	this->backgrounds.push_back(Background(&this->backgroundTexture[1], -200.f));
-	this->background2Texture.loadFromFile("image/sky2.png");
-	this->background2.setSize(sf::Vector2f(1366, 768));
-	this->background2.setTexture(&background2Texture);
-
-	this->itemBuffer.loadFromFile("audio/item.wav");
-	this->itemSound.setBuffer(this->itemBuffer);
-	this->itemSound.setVolume(60);
-	this->itemTexture[0].loadFromFile("image/item1.png");
-	this->itemTexture[1].loadFromFile("image/item2.png");
-	this->itemTexture[2].loadFromFile("image/item3.png");
-	this->setScale[0] = 0.4f;
-	this->setScale[1] = 0.4f;
-	this->setScale[2] = 0.4f;
-
-	this->gui = new GUI();
-	this->buffer.loadFromFile("audio/vader.wav");
-	this->sound.setBuffer(buffer);
-	this->sound.setVolume(40);
-	this->itemSpawnTimerMax = 15.f;
-	this->spawnEnemyTimerMax = 80.f;
-	this->updateSpawmTimer = 10000;
-
-	this->player = new Player();
-	this->oofBuffer.loadFromFile("audio/oof.wav");
-	this->oof.setBuffer(this->oofBuffer);
-	this->oof.setVolume(50);
-	this->player->Animation(&this->player->playerTexture, sf::Vector2u(3, 1), 0.2f);
-	this->player->setPosition(20, this->window->getSize().y / 2 - (this->player->getBounds().height / 2));
-
-	this->hitBuffer.loadFromFile("audio/hit.wav");
-	this->hitSound.setBuffer(this->hitBuffer);
-	this->hitSound.setVolume(50);
-	this->bulletFlag = 0;
-	this->bulletTexture["BULLET"] = new sf::Texture();
-	this->bulletTexture["BULLET"]->loadFromFile("image/bullet.png");
-	this->flagcooldownMax = 50.f;
-
-	this->expoBuffer.loadFromFile("audio/expo.wav");
-	this->expoSound.setBuffer(this->expoBuffer);
-	this->expoSound.setVolume(20);
-	this->Enemies[0].loadFromFile("image/moveEnemy1.png");
-	this->Enemies[1].loadFromFile("image/moveEnemy2.png");
-	this->enemyHP[0] = 150;
-	this->enemyHP[1] = 100;
-	this->enemyScore[0] = 100;
-	this->enemyScore[1] = 200;
-	this->enemyDmg[0] = 50;
-}
-
 void Game::initBackground()
 {
 	this->backgroundTexture[0].loadFromFile("image/sky.png");
@@ -125,7 +75,6 @@ void Game::initBackground()
 
 void Game::initItem()
 {
-
 	this->itemBuffer.loadFromFile("audio/item.wav");
 	this->itemSound.setBuffer(this->itemBuffer);
 	this->itemSound.setVolume(60);
@@ -142,7 +91,7 @@ void Game::initVar()
 	this->gui = new GUI();
 	this->buffer.loadFromFile("audio/vader.wav");
 	this->sound.setBuffer(buffer);
-	this->sound.setVolume(40);
+	this->sound.setVolume(20);
 	this->itemSpawnTimerMax = 15.f; 
 	this->spawnEnemyTimerMax = 80.f;
 	this->updateSpawmTimer = 10000;
@@ -181,6 +130,20 @@ void Game::initEnemy()
 	this->enemyScore[0] = 100;
 	this->enemyScore[1] = 200;
 	this->enemyDmg[0] = 50;
+}
+
+void Game::initGame()
+{
+	this->menuSound.stop();
+	this->initBackground();
+	this->initItem();
+	this->initVar();
+	this->initPlayer();
+	this->initBullet();
+	this->initEnemy();
+	this->sound.play();
+	this->sound.setLoop(true);
+	clock.restart();
 }
 
 Game::Game()
@@ -242,8 +205,6 @@ void Game::updatePullEvent()
 			this->textName.push_back(ev);
 			break;
 		}
-		//if (ev.Event::type == sf::Event::Closed)
-		//	this->window->close();
 	}
 }
 
@@ -254,24 +215,12 @@ void Game::updateMenu()
 	this->HighScore->update(this->mousePos);
 	if (this->Newgame->isPressed())
 	{
-		/*this->sound.play();
-		this->sound.setLoop(true);*/
-		this->gameOn = 0;
-		this->inputName = 1;
-		this->menuOn = 0;
-		this->scoreOn = 0;
-		this->gameStop = 0;
-		this->gamOverOn = 0;
+		this->State = 3;
 	}
 	if (this->HighScore->isPressed())
 	{
 		this->initHighScore();
-		this->gameOn = 0;
-		this->inputName = 0;
-		this->menuOn = 0;
-		this->scoreOn = 1;
-		this->gameStop = 0;
-		this->gamOverOn = 0;
+		this->State = 2;
 	}
 	if (this->Exit->isPressed())
 	{
@@ -284,59 +233,36 @@ void Game::updateHighScore()
 	this->Back->update(this->mousePos);
 	if (this->Back->isPressed())
 	{
-		this->gameOn = 0;
-		this->inputName = 0;
-		this->menuOn = 1;
-		this->scoreOn = 0;
-		this->gameStop = 0;
-		this->gamOverOn = 0;
+		this->State = 1;
 	}
 }
 
 void Game::updateEnterName()
 {
-	this->window->clear();
+	this->enterName->Animation(this->deltaTime);
 	this->enterName->enterName(this->textName);
 	this->BackInput->update(this->mousePos);
 	this->Play->update(this->mousePos);
 	if (this->Play->isPressed())
 	{
 		this->initGame();
-		this->gameOn = 1;
-		this->inputName = 0;
-		this->menuOn = 0;
-		this->scoreOn = 0;
-		this->gameStop = 0;
-		this->gamOverOn = 0;
+		this->State = 4;
 	}
 	if (this->BackInput->isPressed())
 	{
-		this->gameOn = 0;
-		this->inputName = 0;
-		this->menuOn = 1;
-		this->scoreOn = 0;
-		this->gameStop = 0;
-		this->gamOverOn = 0;
+		this->State = 1;
 	}
-	this->enterName->render(this->window);
-	this->Play->render(this->window);
-	this->BackInput->render(this->window);
-	std::cout << this->enterName->getPlayerName();
-	this->window->display();
 }
 
 void Game::updateGamePause()
 {
+	this->sound.pause();
 	this->Continuous->update(this->mousePos);
 	this->ExitGamePause->update(this->mousePos);
 	if (this->Continuous->isPressed())
 	{
-		this->gameOn = 1;
-		this->inputName = 0;
-		this->menuOn = 0;
-		this->scoreOn = 0;
-		this->gameStop = 0;
-		this->gamOverOn = 0;
+		this->State = 4;
+		this->sound.play();
 	}
 	if (this->ExitGamePause->isPressed())
 	{
@@ -346,27 +272,21 @@ void Game::updateGamePause()
 
 void Game::updateGameOver()
 {
-	
 	this->GoToHighScore->update(this->mousePos);
 	this->ExtitGame->update(this->mousePos);
 	if (this->GoToHighScore->isPressed())
 	{
 		this->initHighScore();
-		this->gameOn = 0;
+		/*this->gameOn = 0;
 		this->inputName = 0;
 		this->menuOn = 0;
 		this->scoreOn = 1;
 		this->gameStop = 0;
-		this->gamOverOn = 0;
+		this->gamOverOn = 0;*/
 	}
 	if (this->ExtitGame->isPressed())
 	{
-		this->gameOn = 0;
-		this->inputName = 0;
-		this->menuOn = 1;
-		this->scoreOn = 0;
-		this->gameStop = 0;
-		this->gamOverOn = 0;
+		this->window->close();
 	}
 }
 
@@ -417,7 +337,6 @@ void Game::updateCollisionWorld()
 
 void Game::updateSpawnTimer()
 {
-	
 	if (this->timer >= this->updateSpawmTimer)
 	{
 		this->timer = 0;
@@ -431,12 +350,11 @@ void Game::updateSpawnTimer()
 void Game::updateAnimation()
 {
 	//player
-	this->player->updateAnmation(0,this->deltaTime);
+	this->player->updateAnmation(0, this->deltaTime);
 	this->player->playerSprite.setTextureRect(player->uvRect);
 	//background
 	for (Background& background : backgrounds)
 		background.updateBackground(deltaTime);
-	std::cout << "update Animation\n";
 }
 
 void Game::updateEnemy()
@@ -484,11 +402,7 @@ void Game::updateEnemy()
 					this->sound.stop();
 					this->gameOver->getScore(this->gui->getScore());
 					this->gameOver->updateHigh(this->enterName->getPlayerName(), this->gui->getScore());
-					this->gameOn = 0;
-					this->menuOn = 0;
-					this->scoreOn = 0;
-					this->gameStop = 0;
-					this->gamOverOn = 1;
+					this->State = 6;
 					this->gameRestart();
 				}
 				delete this->enemies[i];
@@ -592,20 +506,20 @@ void Game::updateGui()
 
 void Game::update()
 {	
-	this->deltaTime = this->clock.restart().asSeconds();
-	if (gameOn)
+	this->updateSpawnTimer();
+	this->updateInput();
+	this->updateEnemy();
+	this->updateItem();
+	this->updateBullet();
+	this->updateCombat();
+	this->updateGui();
+	this->updateCollisionWorld();
+	this->updateAnimation();
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 	{
-		
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
-		{
-			
-			this->gameOn = 0;
-			this->menuOn = 0;
-			this->scoreOn = 0;
-			this->gameStop = 1;
-			this->gamOverOn = 0;
-		}
+		this->State = 5;
 	}
+	
 }
 
 void Game::gameRestart()
@@ -652,7 +566,11 @@ void Game::renderHigh()
 
 void Game::renderEnterName()
 {
-	
+	this->window->clear();
+	this->enterName->render(this->window);
+	this->Play->render(this->window);
+	this->BackInput->render(this->window);
+	this->window->display();
 }
 
 void Game::renderGamePause()
@@ -704,45 +622,33 @@ void Game::run()
 {
 	while (this->window->isOpen())
 	{
+		this->deltaTime = this->clock.restart().asSeconds();
 		this->mouse = sf::Mouse::getPosition(*this->window);
 		this->mousePos = sf::Vector2f(static_cast<float>(mouse.x), static_cast<float>(mouse.y));
 		this->updatePullEvent();
-		if (menuOn)
+		switch (this->State)
 		{
+		case 1 :
 			this->updateMenu();
 			this->renderMenu();
-		}
-		if (scoreOn)
-		{
+			break;
+		case 2:
 			this->updateHighScore();
 			this->renderHigh();
-		}
-		if (inputName)
-		{
+			break;
+		case 3:
 			this->updateEnterName();
-			/*this->renderEnterName();*/
-		}
-		if (gameOn)
-		{
+			this->renderEnterName();
+			break;
+		case 4:
 			this->update();
-			this->updateSpawnTimer();
-			this->updateAnimation();
-			this->updateInput();
-			this->updateEnemy();
-			this->updateItem();
-			this->updateBullet();
-			this->updateCombat();
-			this->updateGui();
-			this->updateCollisionWorld();
 			this->render();
-		}
-		if (gameStop)
-		{
+			break;
+		case 5:
 			this->updateGamePause();
 			this->renderGamePause();
-		}
-		if (gamOverOn)
-		{
+			break;
+		case 6 :
 			this->updateGameOver();
 			this->renderGameOver();
 		}

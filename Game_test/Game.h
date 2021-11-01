@@ -37,13 +37,8 @@ private:
 
 	float windowX;
 	float deltaTime;
-	bool menuOn = 1;
-	bool inputName = 0;
-	bool gameOn = 0;
-	bool gameStop = 0;
-	bool scoreOn = 0;
-	bool gamOverOn = 0;
-	
+	int State;
+
 	//mainmenu
 	mainMenu *menu;
 	sf::SoundBuffer menuBuffer;
@@ -69,6 +64,7 @@ private:
 	
 	Entername* enterName;
 	std::vector<sf::Event> textName;
+	sf::Texture exEnemy[2];
 
 	//background
 	sf::Texture highscoreTex;
@@ -127,13 +123,13 @@ private:
 	void initEnterName();
 	void initGamePause();
 	void initGameOver();
-	void initGame();
 	void initBackground();
 	void initItem();
 	void initVar();
 	void initPlayer();
 	void initBullet();
 	void initEnemy();
+	void initGame();
 
 	Gamepause *gamePause;
 
