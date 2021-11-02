@@ -23,11 +23,13 @@ private:
 	sf::Font font;
 	std::string playerName;
 	sf::Text player;
+	sf::Texture backgoundTex;
 	sf::Texture playerTexture;
 	sf::Texture enemyTexture[2];
+	sf::Sprite backgoundSprite;
 	sf::Sprite playerSprite;
 	sf::Sprite enemySprite[2];
-
+	
 	sf::Texture* shapeTex;
 	sf::Sprite shapeSprite;
 	float totalTime;

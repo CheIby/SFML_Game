@@ -28,6 +28,8 @@ private:
 	sf::Font font;
 	sf::Text GameOverText;
 	sf::Text yourScore;
+	sf::Texture enemyTex[2];
+	sf::Sprite enemySprite[2];
 
 	char temp[255];
 	int score[6];

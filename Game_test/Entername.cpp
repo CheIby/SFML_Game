@@ -6,24 +6,27 @@ Entername::Entername()
 	this->player.setFont(this->font);
 	this->player.setCharacterSize(50);
 	this->player.setFillColor(sf::Color::White);
-	this->player.setPosition(300, 300);
+	this->player.setPosition((1366/2)-(474/2), 115);
 	this->player.setLetterSpacing(1.5);
 	this->player.setString(this->playerName);
 	this->player.setString("Enter Your Name");
 
+	this->backgoundTex.loadFromFile("image/mainmenu4.png");
+	this->backgoundSprite.setTexture(this->backgoundTex);
+
 	this->playerTexture.loadFromFile("image/moveplane2.png");
 	this->playerSprite.setTexture(this->playerTexture);
-	this->playerSprite.setScale(0.5f, 0.5f);
-	this->playerSprite.setPosition(sf::Vector2f(50,400));
+	this->playerSprite.setScale(0.7f, 0.7f);
+	this->playerSprite.setPosition(sf::Vector2f(260,345));
 
 	this->enemyTexture[0].loadFromFile("image/moveEnemy1.png");
 	this->enemyTexture[1].loadFromFile("image/moveEnemy2.png");
 	this->enemySprite[0].setTexture(this->enemyTexture[0]);
 	this->enemySprite[1].setTexture(this->enemyTexture[1]);
-	this->enemySprite[0].setScale(0.5f, 0.5f);
-	this->enemySprite[1].setScale(0.5f, 0.5f);
-	this->enemySprite[0].setPosition(sf::Vector2f(500, 400));
-	this->enemySprite[1].setPosition(sf::Vector2f(800, 400));
+	this->enemySprite[0].setScale(0.7f, 0.7f);
+	this->enemySprite[1].setScale(0.7f, 0.7f);
+	this->enemySprite[0].setPosition(sf::Vector2f(700, 360));
+	this->enemySprite[1].setPosition(sf::Vector2f(705, 520));
 
 	this->currentImage.x = 0;
 	this->switchTime = 0.2f;
@@ -89,6 +92,7 @@ void Entername::Animation(float deltatime)
 
 void Entername::render(sf::RenderTarget* target)
 {
+	target->draw(this->backgoundSprite);
 	target->draw(this->player);
 	for (int i = 0; i < 2; i++)
 	{

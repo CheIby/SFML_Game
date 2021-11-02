@@ -25,8 +25,6 @@
 #include "Gamepause.h"
 #include "Entername.h"
 
-//void showText(sf::Vector2f position, std::string word, sf::Font* font, int size, sf::RenderWindow& window);
-
 class Game
 {
 private:
@@ -38,9 +36,11 @@ private:
 	float windowX;
 	float deltaTime;
 	int State;
+	bool gameStop;
 
 	//mainmenu
 	mainMenu *menu;
+	sf::Text me;
 	sf::SoundBuffer menuBuffer;
 	sf::Sound menuSound;
 
@@ -131,7 +131,7 @@ private:
 	void initEnemy();
 	void initGame();
 
-	Gamepause *gamePause;
+	sf::Text gamePause;
 
 	//player
 	Player* player;
@@ -152,6 +152,7 @@ public:
 	void updateEnterName();
 	void updateGamePause();
 	void updateGameOver();
+	void updateHighOver();
 
 	void updateInput();
 	void updateCollisionWorld();
@@ -170,19 +171,9 @@ public:
 	void renderEnterName();
 	void renderGamePause();
 	void renderGameOver();
+	void renderHighOver();
 	void render();
 	void run ();
 };
-
-//void showText(sf::Vector2f position, std::string word, sf::Font* font, int size, sf::RenderWindow& window) {
-//	sf::Text text;
-//	text.setFont(*font);
-//	text.setPosition(position);
-//	text.setString(word);
-//	text.setCharacterSize(size);
-//	text.setOutlineColor(sf::Color::Black);
-//	text.setOutlineThickness(3);
-//	window.draw(text);
-//}
 
 #endif // !GAME_H

@@ -35,7 +35,7 @@ void Highscore::initHighscore()
 
 void Highscore::initBackground()
 {
-	this->backgroundTexture.loadFromFile("image/sky.png");
+	this->backgroundTexture.loadFromFile("image/highscore.png");
 	this->background.setTexture(this->backgroundTexture);
 }
 

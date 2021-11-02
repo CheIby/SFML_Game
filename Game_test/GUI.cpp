@@ -84,6 +84,7 @@ void GUI::updatetype(int type)
 	{
 		check[1] += 1;
 	}
+	
 }
 
 void GUI::currentType()
