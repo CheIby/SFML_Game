@@ -106,7 +106,7 @@ void Game::initVar()
 	this->sound.setBuffer(buffer);
 	this->sound.setVolume(20);
 	this->itemSpawnTimerMax = 15.f; 
-	this->spawnEnemyTimerMax = 20.f;
+	this->spawnEnemyTimerMax = 80.f;
 	this->updateSpawmTimer = 10000;
 }
 
@@ -215,7 +215,10 @@ void Game::updatePullEvent()
 			this->window->close();
 			break;
 		case sf::Event::TextEntered:
-			this->textName.push_back(ev);
+			if (this->State == 3)
+			{
+				this->textName.push_back(ev);
+			}
 			break;
 		}
 	}
@@ -427,7 +430,6 @@ void Game::updateEnemy()
 						this->gameOver->updateHigh(this->enterName->getPlayerName(), this->gui->getScore());
 					}
 					this->State = 5;
-					this->gameRestart();
 				}
 				delete this->enemies[i];
 				this->enemies.erase(this->enemies.begin() + i);
@@ -544,30 +546,6 @@ void Game::update()
 		this->sound.pause();
 		this->gameStop = true;
 	}
-}
-
-void Game::gameRestart()
-{
-	/*for (int i = 0; i < enemies.size(); i++)
-	{
-		delete this->enemies[i];
-		this->enemies.erase(this->enemies.begin() + i);
-	}
-	for (int i = 0; i < items.size(); i++)
-	{
-		delete this->items[i];
-		this->items.erase(this->items.begin() + i);
-	}*/
-	this->player->gameReset = 1;
-	this->player->setPosition(20, this->window->getSize().y / 2 - (this->player->getBounds().height / 2));
-	this->spawnEnemyTimerMax = 80;
-	this->gui->gameReset = 1;
-	/*this->backgrounds.clear();*/
-	/*this->enemies.clear();
-	this->items.clear();
-	this->gui->score = 0;
-	this->backgrounds.push_back(Background(&this->backgroundTexture[0], -50.f));
-	this->backgrounds.push_back(Background(&this->backgroundTexture[1], -200.f));*/
 }
 
 void Game::renderMenu()

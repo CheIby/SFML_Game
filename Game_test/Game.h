@@ -22,7 +22,6 @@
 #include "Botton.h"
 #include "Highscore.h"
 #include "GameOver.h"
-#include "Gamepause.h"
 #include "Entername.h"
 
 class Game
@@ -164,7 +163,6 @@ public:
 	void updateCombat();
 	void updateGui();
 	void update();
-	void gameRestart();
 
 	void renderMenu();
 	void renderHigh();
